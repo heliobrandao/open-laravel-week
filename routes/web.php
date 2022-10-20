@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\BeerController;
+use App\Http\Controllers\ExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,4 +30,19 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
+
+Route::group([
+    'prefix' => 'beers',
+    'middleware' => 'auth'
+], function () {
+    Route::get('/', [BeerController::class, 'index'])->middleware(['auth']);
+
+    Route::get('/export', [BeerController::class, 'export']);
+
+    Route::get('/destroy/{export}', [ExportController::class, 'destroy']);
+
+    Route::resource("reports", ExportController::class)
+        ->middleware("auth")
+        ->only(["index", "destroy"]);
+});
