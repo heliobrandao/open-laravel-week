@@ -36,13 +36,15 @@ Route::group([
     'prefix' => 'beers',
     'middleware' => 'auth'
 ], function () {
-    Route::get('/', [BeerController::class, 'index'])->middleware(['auth']);
+    Route::get('/', [BeerController::class, 'index'])
+        ->middleware(['auth'])
+        ->name('beers');
 
-    Route::get('/export', [BeerController::class, 'export']);
+    Route::post('/export', [BeerController::class, 'export'])->name('beers.export');
 
     Route::get('/destroy/{export}', [ExportController::class, 'destroy']);
 
     Route::resource("reports", ExportController::class)
         ->middleware("auth")
-        ->only(["index", "destroy"]);
+        ->only(["index", "show", "destroy"]);
 });
